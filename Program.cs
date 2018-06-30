@@ -1,7 +1,7 @@
-﻿using System;
-using SadConsole;
-using Console = SadConsole.Console;
+﻿using Console = SadConsole.Console;
 using Microsoft.Xna.Framework;
+using GoRogue;
+using Rect = Microsoft.Xna.Framework.Rectangle;
 
 
 namespace GrimDank
@@ -45,11 +45,15 @@ namespace GrimDank
 
         private static void Init()
         {
+            // GoRogue test
+            Coord c = Coord.Get(1, 2);
+            System.Console.WriteLine(c);
+            
             // Any custom loading and prep. We will use a sample console for now
 
             Console startingConsole = new Console(Width, Height);
             startingConsole.FillWithRandomGarbage();
-            startingConsole.Fill(new Rectangle(3, 3, 27, 5), null, Color.Black, 0);
+            startingConsole.Fill(new Rect(3, 3, 27, 5), null, Color.Black, 0);
             startingConsole.Print(6, 5, "Hello from SadConsole", ColorAnsi.CyanBright);
 
             // Set our new console as the thing to render and process
