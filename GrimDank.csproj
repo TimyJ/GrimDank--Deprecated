@@ -58,8 +58,16 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Program.cs" />
+    <Compile Include="GrimDank.cs" />
+    <Compile Include="LocationExtensions.cs" />
+    <Compile Include="Map.cs" />
+    <Compile Include="MapObjects\MapObject.cs" />
+    <Compile Include="MapRenderer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="OldStuff\WorldBasedGameObject.cs" />
+    <Compile Include="TerrainTypes\Floor.cs" />
+    <Compile Include="TerrainTypes\Terrain.cs" />
+    <Compile Include="TerrainTypes\Wall.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -118,5 +126,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
