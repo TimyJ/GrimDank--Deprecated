@@ -11,7 +11,7 @@ namespace GrimDank
     // TODO: This probably needs to be IDisposable if MapRenderers are destroyed before map (lest lambda keep them alive)
     // Since these require private Map class data to function, you likely won't create these
     // using a constructor.  Instead, use the Map.CreateRenderer function.
-    class MapRenderer : Screen
+    class MapScreen : Screen
     {
         public Map CurrentMap { get; private set; }
         public bool UsePixelPositioning { get; set; }
@@ -21,7 +21,7 @@ namespace GrimDank
 
         private Point cachedOffset;
 
-        public MapRenderer(int width, int height, Map map, Terrain[] terrain)
+        public MapScreen(int width, int height, Map map, Terrain[] terrain)
         {
             UsePixelPositioning = false;
 

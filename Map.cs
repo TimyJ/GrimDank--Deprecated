@@ -65,16 +65,92 @@ namespace GrimDank
         }
         public void SetTerrain(int x, int y, Terrain newTerrain) => SetTerrain(Coord.Get(x, y), newTerrain);
 
+        public bool Add(MapObject mapObject) => Add(mapObject, mapObject.Position);
+
+        // Adds object at given position by first modifying the position and then adding the object
+        public bool Add(MapObject mapObject, Coord position)
+        {
+            if (WillCollide(mapObject, position))
+                return false;
+
+            // TODO: This will change when we switch to layers.
+            if (_entities.Contains(position))
+                return false;
+
+            if (mapObject.CurrentMap != null)
+                mapObject.CurrentMap.Remove(mapObject);
+
+            mapObject.Position = position;
+
+            _entities.Add(mapObject, mapObject.Position);
+            mapObject.Moved += OnMapObjectMoved;
+            mapObject._onMapChanged(this);
+
+            MapObjectAdded?.Invoke(this, new MapObjectArgs(mapObject));
+
+            return true;
+        }
+        public bool Add(MapObject mapObject, int x, int y) => Add(mapObject, Coord.Get(x, y));
+
+        public bool Remove(MapObject mapObject)
+        {
+            // TODO: This will change when we switch to layers.
+            if (!_entities.Remove(mapObject))
+                return false;
+
+            mapObject.Moved -= OnMapObjectMoved;
+            mapObject._onMapChanged(null);
+
+            MapObjectRemoved?.Invoke(this, new MapObjectArgs(mapObject));
+
+            return true;
+        }
+
         // Call this when you are changing something about a piece of terrain, and you're doing it in a way where
         // the setter functions for Terrain won't be called (eg., while that terrain is casted to a Cell, or while
         // using a SadConsole function that manipulates its properties with it casted as a Cell.
         public void MarkCellsDirty() => CellsDirtied?.Invoke(this, EventArgs.Empty);
 
+        public bool IsWalkable(Coord position)
+        {
+            if (!GetTerrain(position).IsWalkable)
+                return false;
+
+            // TODO: These will change once we add multiple spatial maps.
+            if (!_entities.Contains(position))
+                return true;
+
+            if (!_entities.GetItem(position).IsWalkable)
+                return false;
+
+            return true;
+
+        }
+        public bool IsWalkable(int x, int y) => IsWalkable(Coord.Get(x, y));
+
+        // Whether or not the given item will collide at the given position
+        public bool WillCollide(IMapThing item, Coord position)
+        {
+            if (item.IsWalkable)
+                return false;
+
+            if (IsWalkable(position))
+                return false;
+
+            return true;
+        }
+        public bool WillCollide(IMapThing item, int x, int y) => WillCollide(item, Coord.Get(x, y));
+        // Assumes current position of item as the position to check
+        public bool WillCollide(IMapThing item) => WillCollide(item, item.Position);
+
         // Create renderer for this map.
-        public MapRenderer CreateRenderer(int width, int height) =>
-            new MapRenderer(width, height, this, terrain);
+        public MapScreen CreateRenderer(int width, int height) =>
+            new MapScreen(width, height, this, terrain);
 
         // Event handler for TerrainBase.CellChanged event.
         private void OnCellChanged(object s, EventArgs e) => MarkCellsDirty();
+
+        // Assumes collision detection already done, just to keep spatial map up to date.
+        private void OnMapObjectMoved(object s, MovedArgs e) => _entities.Move((MapObject)s, e.NewPosition);
     }
 }

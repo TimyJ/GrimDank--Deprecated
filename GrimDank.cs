@@ -1,8 +1,9 @@
-﻿using Console = SadConsole.Console;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using GoRogue.MapGeneration.Generators;
 using GoRogue.MapViews;
 using GrimDank.TerrainTypes;
+using GrimDank.MapObjects;
+using GoRogue;
 
 
 namespace GrimDank
@@ -17,6 +18,7 @@ namespace GrimDank
         public const int MapHeight = 100;
 
         public static Map CurrentMap { get; private set; }
+        public static Player Player { get; private set; }
 
         static void Main(string[] args)
         {
@@ -53,6 +55,7 @@ namespace GrimDank
         private static void Init()
         {
             CurrentMap = GenerateMap();
+            AddPlayer(Coord.Get(5, 6));
 
             var mapScreen = CurrentMap.CreateRenderer(ScreenWidth, ScreenHeight);
 
@@ -78,8 +81,13 @@ namespace GrimDank
                         gennedMap.SetTerrain(x, y, new Wall(x, y));
 
             return gennedMap;
+        }
 
-
+        // See comment on above function.
+        private static void AddPlayer(Coord position)
+        {
+            Player = new Player(position);
+            CurrentMap.Add(Player);
         }
     }
 }

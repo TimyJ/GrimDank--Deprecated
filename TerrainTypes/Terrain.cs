@@ -5,7 +5,7 @@ using GoRogue;
 
 namespace GrimDank.TerrainTypes
 {
-    class Terrain : Cell
+    class Terrain : Cell, IMapThing
     {
         // We hide these with new.  It's like inheritance but without polymorphism.  If I cast this to Cell
         // and modify Foreground for instance, the below getter/setter aren't called -- Cell's getter and setter
