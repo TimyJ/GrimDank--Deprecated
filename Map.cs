@@ -1,5 +1,6 @@
 ﻿using GrimDank.TerrainTypes;
 using GrimDank.MapObjects;
+using GrimDank.Consoles;
 using GoRogue;
 using System;
 
@@ -144,8 +145,8 @@ namespace GrimDank
         public bool WillCollide(IMapThing item) => WillCollide(item, item.Position);
 
         // Create renderer for this map.
-        public MapScreen CreateRenderer(int width, int height) =>
-            new MapScreen(width, height, this, terrain);
+        public MapConsole CreateRenderer(int width, int height) =>
+            new MapConsole(width, height, this, terrain);
 
         // Event handler for TerrainBase.CellChanged event.
         private void OnCellChanged(object s, EventArgs e) => MarkCellsDirty();

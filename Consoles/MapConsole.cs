@@ -4,19 +4,19 @@ using SadConsole.Surfaces;
 using Microsoft.Xna.Framework;
 using SadConsole;
 
-namespace GrimDank
+namespace GrimDank.Consoles
 {
     // This MAYBE should be an IScreen but input handling woudl be different and this is slightly less code
     // TODO: This probably needs to be IDisposable if MapRenderers are destroyed before map (lest lambda keep them alive)
     // Since these require private Map class data to function, you likely won't create these
     // using a constructor.  Instead, use the Map.CreateRenderer function.
-    class MapScreen : SadConsole.Console
+    class MapConsole : SadConsole.Console
     {
         public Map CurrentMap { get; private set; }
 
         private Point cachedOffset;
 
-        public MapScreen(int width, int height, Map map, Terrain[] terrain)
+        public MapConsole(int width, int height, Map map, Terrain[] terrain)
             : base(new BasicSurface(map.Width, map.Height, terrain, Global.FontDefault,
                                     new Rectangle(0, 0, width, height)))
         {
