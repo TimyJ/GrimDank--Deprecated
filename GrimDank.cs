@@ -61,6 +61,7 @@ namespace GrimDank
 
             // Set our new console as the thing to render and process
             SadConsole.Global.CurrentScreen = mapScreen;
+            SadConsole.Global.FocusedConsoles.Set(mapScreen);
 
             SadConsole.Settings.ResizeMode = SadConsole.Settings.WindowResizeOptions.Stretch;
         }
