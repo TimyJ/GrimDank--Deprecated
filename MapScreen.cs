@@ -1,37 +1,26 @@
 ﻿using System;
-using System.Collections.Generic;
 using GrimDank.TerrainTypes;
-using SadConsole.Renderers;
 using SadConsole.Surfaces;
 using Microsoft.Xna.Framework;
 using SadConsole;
 
 namespace GrimDank
 {
+    // This MAYBE should be an IScreen but input handling woudl be different and this is slightly less code
     // TODO: This probably needs to be IDisposable if MapRenderers are destroyed before map (lest lambda keep them alive)
     // Since these require private Map class data to function, you likely won't create these
     // using a constructor.  Instead, use the Map.CreateRenderer function.
-    class MapScreen : Screen
+    class MapScreen : SadConsole.Console
     {
         public Map CurrentMap { get; private set; }
-        public bool UsePixelPositioning { get; set; }
-
-        private ISurface textSurface;
-        private ISurfaceRenderer surfaceRenderer;
 
         private Point cachedOffset;
 
         public MapScreen(int width, int height, Map map, Terrain[] terrain)
+            : base(new BasicSurface(map.Width, map.Height, terrain, Global.FontDefault,
+                                    new Rectangle(0, 0, width, height)))
         {
-            UsePixelPositioning = false;
-
             CurrentMap = map;
-
-            // TODO: This should be min of this and map width/height, probably.
-            var viewport = new Rectangle(0, 0, width, height);
-            textSurface = new BasicSurface(map.Width, map.Height, terrain, Global.FontDefault, viewport);
-            surfaceRenderer = new SurfaceRenderer();
-
             map.CellsDirtied += OnCellsDirtied;
         }
 
@@ -40,14 +29,7 @@ namespace GrimDank
         {
             base.Update(timeElapsed);
 
-            var offset = position + textSurface.RenderArea.Location;
-            if (offset != cachedOffset)
-            {
-                cachedOffset = offset;
-
-                foreach (var gameObject in CurrentMap.Entities.Items)
-                    gameObject.Renderer.PositionOffset = cachedOffset;
-            }
+            UpdateGameObjectOffsets();
         }
 
         // If the screen position has moved, we need to update all GameObject positions.
@@ -55,6 +37,26 @@ namespace GrimDank
         {
             base.OnCalculateRenderPosition();
 
+            UpdateGameObjectOffsets();
+        }
+
+        public override void Draw(TimeSpan timeElapsed)
+        {
+            base.Draw(timeElapsed);
+
+            if (IsVisible)
+            {
+                // Draw GameObjects
+                foreach (var gameObject in CurrentMap.Entities.Items)
+                    gameObject.Renderer.Draw(timeElapsed);
+
+            }
+        }
+
+        private void OnCellsDirtied(object s, EventArgs e) => textSurface.IsDirty = true;
+
+        private void UpdateGameObjectOffsets()
+        {
             var offset = position + textSurface.RenderArea.Location;
             if (offset != cachedOffset)
             {
@@ -64,30 +66,5 @@ namespace GrimDank
                     gameObject.Renderer.PositionOffset = cachedOffset;
             }
         }
-
-        public override void Draw(TimeSpan timeElapsed)
-        {
-            if (IsVisible)
-            {
-                // Draw the cells (terrain)
-                surfaceRenderer.Render(textSurface);
-                Global.DrawCalls.Add(new DrawCallSurface(textSurface, calculatedPosition, UsePixelPositioning));
-
-                // Draw GameObjects
-                foreach (var gameObject in CurrentMap.Entities.Items)
-                    gameObject.Renderer.Draw(timeElapsed);
-
-                // Draw any children screens.
-                if (Children.Count != 0)
-                {
-                    var copyList = new List<IScreen>(Children);
-
-                    foreach (var child in copyList)
-                        child.Draw(timeElapsed);
-                }
-            }
-        }
-
-        private void OnCellsDirtied(object s, EventArgs e) => textSurface.IsDirty = true;
     }
 }

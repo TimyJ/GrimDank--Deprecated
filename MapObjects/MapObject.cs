@@ -73,6 +73,17 @@ namespace GrimDank.MapObjects
                           bool isWalkable = false, bool isTransparent = true)
             : this(Coord.Get(x, y), glyph, foreground, background, isWalkable, isTransparent) { }
 
+        public bool MoveIn(Direction direction)
+        {
+            if (direction == Direction.NONE)
+                return false;
+
+            var oldPos = Position;
+            Position += direction;
+
+            return Position != oldPos;
+        }
+
         // Do NOT call this unless you are the map class's Add/Remove GameObject functions.  Bad.
         internal void _onMapChanged(Map newMap) => CurrentMap = newMap;
     }

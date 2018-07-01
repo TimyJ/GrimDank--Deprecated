@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework;
 
 namespace GrimDank
 {
-    // Convenience extension functions for working with SadConsole points.
+    // Convenience extension functions for working with SadConsole points and GoRogue stuff.
     static class LocationExtensions
     {
         public static Coord ToCoord(this Point p) => Coord.Get(p.X, p.Y);
