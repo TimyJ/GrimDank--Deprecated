@@ -84,6 +84,9 @@ namespace GrimDank.MapObjects
             return Position != oldPos;
         }
 
+        // Exists so if we do animations it can update all the frames as needed.
+        public void SetBackground(Color color) => Renderer.Animation.CurrentFrame[0].Background = color;
+
         // Do NOT call this unless you are the map class's Add/Remove GameObject functions.  Bad.
         internal void _onMapChanged(Map newMap) => CurrentMap = newMap;
     }

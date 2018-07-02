@@ -21,6 +21,7 @@ namespace GrimDank
         public int Width { get; private set; }
         public int Height { get; private set; }
 
+        // TODO: MapObject color will NOT be updated properly if cell is changed as of right now.
         private Terrain[] terrain;
 
         // We'll need multiple spatial maps (one per layer probably) later on.  But,
@@ -90,6 +91,7 @@ namespace GrimDank
             mapObject.Moved += OnMapObjectMoved;
             mapObject._onMapChanged(this);
 
+            mapObject.SetBackground(GetTerrain(mapObject.Position).Background);
             MapObjectAdded?.Invoke(this, new MapObjectArgs(mapObject));
 
             return true;
@@ -157,7 +159,10 @@ namespace GrimDank
         // Assumes collision detection already done, just to keep spatial map up to date.
         private void OnMapObjectMoved(object s, MovedArgs e)
         {
-            _entities.Move((MapObject)s, e.NewPosition);
+            var objectMoved = (MapObject)s;
+            _entities.Move(objectMoved, e.NewPosition);
+
+            objectMoved.SetBackground(GetTerrain(objectMoved.Position).Background);            
 
             MapObjectMoved?.Invoke(s, e);
         }
