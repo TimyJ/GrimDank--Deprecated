@@ -23,8 +23,15 @@ namespace GrimDank
         public static Map CurrentMap { get; private set; }
         public static Player Player { get; private set; }
 
+        // Set to true to enable FPS counter in top-left corner.
+        public const bool ENABLE_FPS_COUNTER = false;
+
         static void Main(string[] args)
         {
+            // Uncommenting this SHOULD allow unlimited FPS for performance testing, however this flag seems
+            // broken at the moment, as it's still capped at 60.
+            //SadConsole.Settings.UnlimitedFPS = true;
+
             // Setup the engine and creat the main window.
             SadConsole.Game.Create("IBM.font", ScreenWidth, ScreenHeight);
 
@@ -57,6 +64,11 @@ namespace GrimDank
 
         private static void Init()
         {
+            var fpsCounter = new SadConsole.Game.FPSCounterComponent(SadConsole.Game.Instance);
+            SadConsole.Game.Instance.Components.Add(fpsCounter);
+            fpsCounter.Enabled = ENABLE_FPS_COUNTER;
+            fpsCounter.Visible = ENABLE_FPS_COUNTER;
+
             CurrentMap = GenerateMap();
             AddPlayer(Coord.Get(5, 6));
             AddTestDummy(Coord.Get(73, 23));
