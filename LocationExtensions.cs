@@ -1,5 +1,7 @@
 ﻿using GoRogue;
 using Microsoft.Xna.Framework;
+using XnaRect = Microsoft.Xna.Framework.Rectangle;
+using GoRogue;
 
 namespace GrimDank
 {
@@ -11,5 +13,7 @@ namespace GrimDank
         public static Coord Add(this Coord c, Point p) => Coord.Get(c.X + p.X, c.Y + p.Y);
         public static Point Add(this Point p, Coord c) => new Point(p.X + c.X, p.Y + c.Y);
         public static Point Add(this Point p, Direction d) => new Point(p.X + d.DeltaX, p.Y + d.DeltaY);
+
+        public static XnaRect ToXnaRect(this GoRogue.Rectangle rect) => new XnaRect(rect.X, rect.Y, rect.Width, rect.Height);
     }
 }

@@ -22,10 +22,16 @@ namespace GrimDank.Consoles
 
         private Point cachedOffset;
 
+        public int ViewportWidth { get; private set; }
+        public int ViewportHeight { get; private set; }
+
         public MapConsole(int width, int height, Map map, Terrain[] terrain)
             : base(new BasicSurface(map.Width, map.Height, terrain, Global.FontDefault,
                                     new XnaRect(0, 0, width, height)))
         {
+            ViewportWidth = width;
+            ViewportHeight = height;
+
             UseKeyboard = true;
 
             CurrentMap = map;
@@ -96,6 +102,11 @@ namespace GrimDank.Consoles
             }
         }
 
+        public void CenterViewportOn(Coord position)
+        {
+            textSurface.RenderArea = new XnaRect(position.X - (ViewportWidth / 2), position.Y - (ViewportHeight / 2), ViewportWidth, ViewportHeight);
+        }
+
         private void OnCellsDirtied(object s, EventArgs e) => textSurface.IsDirty = true;
 
         private void OnMapObjectAdded(object s, EventArgs e) => UpdateGameObjectOffset((MapObject)s);
@@ -104,7 +115,8 @@ namespace GrimDank.Consoles
 
         private void UpdateGameObjectOffsets(bool force = false)
         {
-            var offset = position + textSurface.RenderArea.Location;
+            //var offset = position + textSurface.RenderArea.Location;
+            var offset = CalculatedPosition - textSurface.RenderArea.Location;
             if (offset != cachedOffset || force)
             {
                 cachedOffset = offset;

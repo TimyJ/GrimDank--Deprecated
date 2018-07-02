@@ -3,6 +3,7 @@ using GoRogue.MapGeneration.Generators;
 using GoRogue.MapViews;
 using GrimDank.TerrainTypes;
 using GrimDank.MapObjects;
+using GrimDank.Consoles;
 using GoRogue;
 
 
@@ -22,6 +23,8 @@ namespace GrimDank
 
         public static Map CurrentMap { get; private set; }
         public static Player Player { get; private set; }
+
+        public static MapConsole MapConsole { get; private set; }
 
         // Set to true to enable FPS counter in top-left corner.
         public const bool ENABLE_FPS_COUNTER = false;
@@ -57,9 +60,10 @@ namespace GrimDank
 
             // As an example, we'll use the F5 key to make the game full screen
             if (SadConsole.Global.KeyboardState.IsKeyReleased(Microsoft.Xna.Framework.Input.Keys.F5))
-            {
                 SadConsole.Settings.ToggleFullScreen();
-            }
+            else if (SadConsole.Global.KeyboardState.IsKeyReleased(Microsoft.Xna.Framework.Input.Keys.Q) ||
+                     SadConsole.Global.KeyboardState.IsKeyReleased(Microsoft.Xna.Framework.Input.Keys.Escape))
+                SadConsole.Game.Instance.Exit();
         }
 
         private static void Init()
@@ -73,11 +77,12 @@ namespace GrimDank
             AddPlayer(Coord.Get(5, 6));
             AddTestDummy(Coord.Get(73, 23));
 
-            var mapScreen = CurrentMap.CreateRenderer(MapConsoleWidth, MapConsoleHeight);
+            MapConsole = CurrentMap.CreateRenderer(MapConsoleWidth, MapConsoleHeight);
+            MapConsole.CenterViewportOn(Player.Position);
 
             // Set our new console as the thing to render and process
-            SadConsole.Global.CurrentScreen = mapScreen;
-            SadConsole.Global.FocusedConsoles.Set(mapScreen);
+            SadConsole.Global.CurrentScreen = MapConsole;
+            SadConsole.Global.FocusedConsoles.Set(MapConsole);
 
             SadConsole.Settings.ResizeMode = SadConsole.Settings.WindowResizeOptions.Stretch;
         }
