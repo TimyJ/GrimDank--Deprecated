@@ -66,6 +66,7 @@
     <Compile Include="MapObjects\MapObject.cs" />
     <Compile Include="MapObjects\Player.cs" />
     <Compile Include="Consoles\MapConsole.cs" />
+    <Compile Include="MapObjects\TestDummy.cs" />
     <Compile Include="PowerArmor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TerrainTypes\Floor.cs" />

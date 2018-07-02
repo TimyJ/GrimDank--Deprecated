@@ -1,5 +1,6 @@
 ﻿using System;
 using GrimDank.TerrainTypes;
+using GrimDank.MapObjects;
 using SadConsole.Surfaces;
 using Microsoft.Xna.Framework;
 using XnaRect = Microsoft.Xna.Framework.Rectangle;
@@ -29,6 +30,10 @@ namespace GrimDank.Consoles
 
             CurrentMap = map;
             map.CellsDirtied += OnCellsDirtied;
+            map.MapObjectAdded += OnMapObjectAdded;
+            map.MapObjectMoved += OnMapObjectMoved;
+
+            UpdateGameObjectOffsets(true);
         }
 
         // If render area has moved, we need to update all GameObject positions.
@@ -77,6 +82,7 @@ namespace GrimDank.Consoles
             UpdateGameObjectOffsets();
         }
 
+        // Either we can toggle visibility for stuff as we go, or we can jack the cell rendering and only add those that we need to render for FOV.  Either way.
         public override void Draw(TimeSpan timeElapsed)
         {
             base.Draw(timeElapsed);
@@ -92,16 +98,26 @@ namespace GrimDank.Consoles
 
         private void OnCellsDirtied(object s, EventArgs e) => textSurface.IsDirty = true;
 
-        private void UpdateGameObjectOffsets()
+        private void OnMapObjectAdded(object s, EventArgs e) => UpdateGameObjectOffset((MapObject)s);
+
+        private void OnMapObjectMoved(object s, MovedArgs e) => UpdateGameObjectOffset((MapObject)s);
+
+        private void UpdateGameObjectOffsets(bool force = false)
         {
             var offset = position + textSurface.RenderArea.Location;
-            if (offset != cachedOffset)
+            if (offset != cachedOffset || force)
             {
                 cachedOffset = offset;
 
-                foreach (var gameObject in CurrentMap.Entities.Items)
-                    gameObject.Renderer.PositionOffset = cachedOffset;
+                foreach (var mapObject in CurrentMap.Entities.Items)
+                    UpdateGameObjectOffset(mapObject);
             }
+        }
+
+        private void UpdateGameObjectOffset(MapObject mapObject)
+        {
+            mapObject.Renderer.PositionOffset = cachedOffset;
+            mapObject.Renderer.IsVisible = textSurface.RenderArea.Contains(mapObject.Renderer.Position);
         }
     }
 }

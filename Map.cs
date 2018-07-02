@@ -35,6 +35,8 @@ namespace GrimDank
         public event EventHandler<MapObjectArgs> MapObjectAdded;
         public event EventHandler<MapObjectArgs> MapObjectRemoved;
 
+        public event EventHandler<MovedArgs> MapObjectMoved;
+
         public Map(int width, int height)
         {
             Width = width;
@@ -46,6 +48,7 @@ namespace GrimDank
             CellsDirtied = null;
             MapObjectAdded = null;
             MapObjectRemoved = null;
+            MapObjectMoved = null;
         }
 
         public Terrain GetTerrain(Coord position) => terrain[position.ToIndex(Width)];
@@ -152,6 +155,11 @@ namespace GrimDank
         private void OnCellChanged(object s, EventArgs e) => MarkCellsDirty();
 
         // Assumes collision detection already done, just to keep spatial map up to date.
-        private void OnMapObjectMoved(object s, MovedArgs e) => _entities.Move((MapObject)s, e.NewPosition);
+        private void OnMapObjectMoved(object s, MovedArgs e)
+        {
+            _entities.Move((MapObject)s, e.NewPosition);
+
+            MapObjectMoved?.Invoke(s, e);
+        }
     }
 }

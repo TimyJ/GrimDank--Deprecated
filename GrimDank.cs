@@ -13,6 +13,9 @@ namespace GrimDank
         public const int ScreenWidth = 80;
         public const int ScreenHeight = 25;
 
+        public const int MapConsoleWidth = 70;
+        public const int MapConsoleHeight = 20;
+
         // This is mad temp.
         public const int MapWidth = 100;
         public const int MapHeight = 100;
@@ -56,8 +59,9 @@ namespace GrimDank
         {
             CurrentMap = GenerateMap();
             AddPlayer(Coord.Get(5, 6));
+            AddTestDummy(Coord.Get(73, 23));
 
-            var mapScreen = CurrentMap.CreateRenderer(ScreenWidth, ScreenHeight);
+            var mapScreen = CurrentMap.CreateRenderer(MapConsoleWidth, MapConsoleHeight);
 
             // Set our new console as the thing to render and process
             SadConsole.Global.CurrentScreen = mapScreen;
@@ -89,6 +93,12 @@ namespace GrimDank
         {
             Player = new Player(position);
             CurrentMap.Add(Player);
+        }
+
+        // See above comment.
+        private static void AddTestDummy(Coord position)
+        {
+            CurrentMap.Add(new TestDummy(position));
         }
     }
 }
